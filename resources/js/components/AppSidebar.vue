@@ -15,17 +15,17 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Property',
+        title: 'Properti',
         href: '/properties',
         icon: Building,
     },
     {
-        title: 'Restaurant',
+        title: 'Restoran',
         href: '/restaurants',
         icon: Utensils,
     },
     {
-        title: 'TV Management',
+        title: 'Manajemen TV',
         href: '/tv-management',
         icon: Package,
     },

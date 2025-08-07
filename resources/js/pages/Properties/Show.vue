@@ -3,7 +3,6 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { StarRating } from '@/components/ui/star-rating';
 import Badge from '@/components/ui/badge/Badge.vue';
 import { ArrowLeft, MapPin, Phone, Calendar, Star, Edit, Save, X, Trash2 } from 'lucide-vue-next';
@@ -12,6 +11,7 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import axiosInstance from '@/lib/axios';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import SimpleSelect from '@/components/ui/select/SimpleSelect.vue';
 
 interface PropertyImage {
     id: number;
@@ -817,20 +817,13 @@ onUnmounted(() => {
                                             <div class="flex-1">
                                                 <p class="font-medium">Kategori</p>
                                                 <div v-if="editingField === 'hotel_category'" class="flex items-center gap-2 mt-1">
-                                                    <Select v-model="form.hotel_category" class="flex-1">
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Pilih kategori hotel" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem
-                                                                v-for="category in hotelCategories"
-                                                                :key="category.value"
-                                                                :value="category.value"
-                                                            >
-                                                                {{ category.label }}
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
+                                                    <SimpleSelect
+                                                        v-model="form.hotel_category"
+                                                        :options="hotelCategories"
+                                                        placeholder="Pilih kategori hotel"
+                                                        :disabled="isLoading"
+                                                        class="flex-1"
+                                                    />
                                                     <Button size="sm" @click="saveField('hotel_category')" :disabled="isLoading">
                                                         <Save class="h-4 w-4" />
                                                     </Button>
@@ -1133,6 +1126,18 @@ onUnmounted(() => {
                             </CardContent>
                         </Card>
 
+                        <!-- Quick Actions -->
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Aksi Cepat</CardTitle>
+                            </CardHeader>
+                            <CardContent class="space-y-3">
+                                <Button variant="outline" @click="toggleEditMode" class="w-full justify-start">
+                                    <Edit class="h-4 w-4 mr-2" />
+                                    Edit Properti
+                                </Button>
+                            </CardContent>
+                        </Card>
 
                     </div>
                 </div>

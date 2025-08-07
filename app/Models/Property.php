@@ -34,10 +34,7 @@ class Property extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function restaurants(): HasMany
-    {
-        return $this->hasMany(Restaurant::class);
-    }
+
 
     public function tvManagers(): HasMany
     {
@@ -47,5 +44,15 @@ class Property extends Model
     public function images(): HasMany
     {
         return $this->hasMany(PropertyImage::class);
+    }
+
+    public function restaurantMenuItems(): HasMany
+    {
+        return $this->hasMany(RestaurantMenuItem::class);
+    }
+
+    public function ownerships(): HasMany
+    {
+        return $this->hasMany(Ownership::class);
     }
 }

@@ -17,12 +17,7 @@ class PropertyController extends Controller
         ]);
     }
 
-            public function getUserProperties()
-    {
-        $properties = auth()->user()->properties()->select('id', 'name', 'hotel_category')->get();
 
-        return response()->json($properties);
-    }
 
     public function create()
     {
@@ -70,7 +65,6 @@ class PropertyController extends Controller
                 $path = $image->store('property-images', 'public');
                 $property->images()->create([
                     'image' => $path,
-                    'type' => 'interior'
                 ]);
             }
         }
@@ -160,7 +154,6 @@ class PropertyController extends Controller
 
                 $property->images()->create([
                     'image' => $path,
-                    'type' => 'interior'
                 ]);
                 $uploadedCount++;
             }

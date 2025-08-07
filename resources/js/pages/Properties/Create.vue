@@ -4,12 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { StarRating } from '@/components/ui/star-rating';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { ArrowLeft, Save } from 'lucide-vue-next';
+import SimpleSelect from '@/components/ui/select/SimpleSelect.vue';
 
 const form = ref({
     name: '',
@@ -109,20 +109,12 @@ const submitForm = () => {
 
                                     <div class="space-y-2">
                                         <Label for="hotel_category">Kategori Properti</Label>
-                                        <Select v-model="form.hotel_category">
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Pilih kategori properti" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem
-                                                    v-for="category in hotelCategories"
-                                                    :key="category.value"
-                                                    :value="category.value"
-                                                >
-                                                    {{ category.label }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <SimpleSelect
+                                            v-model="form.hotel_category"
+                                            :options="hotelCategories"
+                                            placeholder="Pilih kategori properti"
+                                            :disabled="isLoading"
+                                        />
                                     </div>
                                 </div>
 
