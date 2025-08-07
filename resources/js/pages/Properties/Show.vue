@@ -9,8 +9,9 @@ import Badge from '@/components/ui/badge/Badge.vue';
 import { ArrowLeft, MapPin, Phone, Calendar, Star, Edit, Save, X, Trash2 } from 'lucide-vue-next';
 import { router } from '@inertiajs/vue3';
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/lib/axios';
 import { ImageUpload } from '@/components/ui/image-upload';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface PropertyImage {
     id: number;
@@ -50,6 +51,56 @@ const isEditMode = ref(false);
 const editingField = ref<string | null>(null);
 const isLoading = ref(false);
 const deletingImageId = ref<number|null>(null);
+
+// Notification state
+const notification = ref<{
+  show: boolean;
+  message: string;
+  type: 'success' | 'error' | 'info';
+}>({
+  show: false,
+  message: '',
+  type: 'info'
+});
+
+const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+  notification.value = {
+    show: true,
+    message,
+    type
+  };
+
+  // Auto hide after 3 seconds
+  setTimeout(() => {
+    notification.value.show = false;
+  }, 3000);
+};
+
+// Dialog states
+const showDeleteConfirmDialog = ref(false);
+const imageToDelete = ref<number | null>(null);
+const showErrorDialog = ref(false);
+const errorDetails = ref<{
+  title: string;
+  message: string;
+  errors?: Record<string, string[]>;
+}>({
+  title: '',
+  message: '',
+  errors: {}
+});
+
+// Function to refresh images from server after upload
+const refreshImages = async () => {
+  try {
+    // For upload, we need to reload to get the new images
+    // For delete, we don't need this as we update the local array
+    window.location.reload();
+  } catch (error) {
+    console.error('Failed to refresh images:', error);
+    showNotification('Gagal memperbarui daftar gambar', 'error');
+  }
+};
 
 // Form data for editing
 const form = reactive({
@@ -113,46 +164,54 @@ const uploadNewImages = async () => {
       console.log(key, value);
     }
 
-    // Get CSRF token from meta tag
-    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-    const response = await axios.post(`/properties/${props.property.id}/images`, formData, {
+    await axiosInstance.post(`/properties/${props.property.id}/images`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Accept': 'application/json',
-        'X-CSRF-TOKEN': token || '',
       },
     });
 
-    console.log('Upload success:', response.data);
+    // Tampilkan pesan sukses
+    showNotification('Gambar berhasil diupload', 'success');
 
     // Clear the newImages array after successful upload
     newImages.value = [];
 
-    // Reload halaman untuk mendapatkan gambar terbaru
-    window.location.reload();
-  } catch (error: any) {
+    // Refresh gambar dari server tanpa reload halaman
+    await refreshImages();
+    } catch (error: any) {
     console.error('Upload error:', error);
 
-    // Tampilkan error yang lebih informatif
+    // Tampilkan error dialog dengan detail
+    let errorMessage = 'Upload gagal';
+    let errorTitle = 'Gagal Upload Gambar';
+    let validationErrors: Record<string, string[]> = {};
+
     if (error.response) {
       // Server responded with error status
       console.error('Error response:', error.response.data);
       if (error.response.data && error.response.data.message) {
-        alert(`Upload gagal: ${error.response.data.message}`);
+        errorMessage = error.response.data.message;
       } else if (error.response.data && error.response.data.errors) {
-        const errorMessages = Object.values(error.response.data.errors).flat();
-        alert(`Upload gagal: ${errorMessages.join(', ')}`);
+        validationErrors = error.response.data.errors;
+        errorMessage = 'Terdapat kesalahan validasi pada file yang diupload';
+        errorTitle = 'Validasi Error';
       } else {
-        alert(`Upload gagal: ${error.response.statusText}`);
+        errorMessage = error.response.statusText;
       }
     } else if (error.request) {
       // Request was made but no response received
-      alert('Upload gagal: Tidak ada respons dari server');
+      errorMessage = 'Tidak ada respons dari server';
     } else {
       // Something else happened
-      alert(`Upload gagal: ${error.message}`);
+      errorMessage = error.message;
     }
+
+    showErrorDialog.value = true;
+    errorDetails.value = {
+      title: errorTitle,
+      message: errorMessage,
+      errors: Object.keys(validationErrors).length > 0 ? validationErrors : undefined
+    };
   }
 
   isUploading.value = false;
@@ -250,25 +309,64 @@ const saveAllChanges = async () => {
     }
 };
 
-const deleteImage = async (imageId: number) => {
-  if (deletingImageId.value) return;
-  deletingImageId.value = imageId;
+const confirmDeleteImage = (imageId: number) => {
+  imageToDelete.value = imageId;
+  showDeleteConfirmDialog.value = true;
+};
+
+const deleteImage = async () => {
+  if (!imageToDelete.value || deletingImageId.value) return;
+
+  deletingImageId.value = imageToDelete.value;
+
   try {
-    await router.delete(`/property-images/${imageId}`, {
-      onSuccess: () => {
-        // Hapus gambar dari propertyImages
-        const idx = propertyImages.value.findIndex(img => img.id === imageId);
-        if (idx !== -1) propertyImages.value.splice(idx, 1);
-      },
-      onError: () => {
-        alert('Gagal menghapus gambar');
+    const response = await axiosInstance.delete(`/property-images/${imageToDelete.value}`);
+
+    if (response.data.success) {
+      // Hapus gambar dari propertyImages array
+      const idx = propertyImages.value.findIndex(img => img.id === imageToDelete.value);
+      if (idx !== -1) {
+        propertyImages.value.splice(idx, 1);
       }
-    });
-  } catch (error) {
+
+      // Tampilkan pesan sukses
+      showNotification(response.data.message, 'success');
+    } else {
+      throw new Error('Response tidak berhasil');
+    }
+  } catch (error: any) {
     console.error('Delete error:', error);
-    alert('Gagal menghapus gambar');
+
+    // Tampilkan error dialog dengan detail
+    let errorMessage = 'Gagal menghapus gambar';
+
+    if (error.response) {
+      if (error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message;
+      } else {
+        errorMessage = error.response.statusText;
+      }
+    } else if (error.request) {
+      errorMessage = 'Tidak ada respons dari server';
+    } else {
+      errorMessage = error.message;
+    }
+
+    showErrorDialog.value = true;
+    errorDetails.value = {
+      title: 'Gagal Menghapus Gambar',
+      message: errorMessage
+    };
+  } finally {
+    deletingImageId.value = null;
+    imageToDelete.value = null;
+    showDeleteConfirmDialog.value = false;
   }
-  deletingImageId.value = null;
+};
+
+const cancelDelete = () => {
+  showDeleteConfirmDialog.value = false;
+  imageToDelete.value = null;
 };
 
 // HAPUS: Semua fungsi terkait edit gambar, imagesToDelete, newImages, upload/hapus gambar, preview, dan UI edit gambar
@@ -312,6 +410,92 @@ onUnmounted(() => {
         { title: 'Properti', href: '/properties' },
         { title: property.name, href: `/properties/${property.id}` }
     ]">
+        <!-- Notification Toast -->
+        <div
+            v-if="notification.show"
+            :class="[
+                'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 max-w-sm',
+                notification.type === 'success' ? 'bg-green-500 text-white' : '',
+                notification.type === 'error' ? 'bg-red-500 text-white' : '',
+                notification.type === 'info' ? 'bg-blue-500 text-white' : ''
+            ]"
+        >
+            <div class="flex items-center gap-2">
+                <span v-if="notification.type === 'success'" class="text-lg">✅</span>
+                <span v-else-if="notification.type === 'error'" class="text-lg">❌</span>
+                <span v-else class="text-lg">ℹ️</span>
+                <span class="text-sm font-medium">{{ notification.message }}</span>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Dialog -->
+        <Dialog :open="showDeleteConfirmDialog" @update:open="showDeleteConfirmDialog = $event">
+            <DialogContent class="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle class="flex items-center gap-2">
+                        <Trash2 class="h-5 w-5 text-red-500" />
+                        Konfirmasi Hapus Gambar
+                    </DialogTitle>
+                    <DialogDescription>
+                        Apakah Anda yakin ingin menghapus gambar ini? Tindakan ini tidak dapat dibatalkan.
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter class="flex gap-2">
+                    <Button variant="outline" @click="cancelDelete" :disabled="deletingImageId !== null">
+                        Batal
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        @click="deleteImage"
+                        :disabled="deletingImageId !== null"
+                        class="flex items-center gap-2"
+                    >
+                        <Trash2 v-if="deletingImageId === null" class="h-4 w-4" />
+                        <span v-else class="h-4 w-4 animate-spin">⏳</span>
+                        {{ deletingImageId !== null ? 'Menghapus...' : 'Hapus Gambar' }}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        <!-- Error Dialog -->
+        <Dialog :open="showErrorDialog" @update:open="showErrorDialog = $event">
+            <DialogContent class="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle class="flex items-center gap-2 text-red-600">
+                        <X class="h-5 w-5" />
+                        {{ errorDetails.title }}
+                    </DialogTitle>
+                    <DialogDescription class="text-left">
+                        {{ errorDetails.message }}
+                    </DialogDescription>
+                </DialogHeader>
+
+                <!-- Validation Errors -->
+                <div v-if="errorDetails.errors && Object.keys(errorDetails.errors).length > 0" class="mt-4">
+                    <h4 class="font-medium text-sm text-red-600 mb-2">Detail Error:</h4>
+                    <div class="space-y-2 max-h-40 overflow-y-auto">
+                        <div
+                            v-for="(errors, field) in errorDetails.errors"
+                            :key="field"
+                            class="text-sm"
+                        >
+                            <div class="font-medium text-red-600 capitalize">{{ field.replace('_', ' ') }}:</div>
+                            <ul class="list-disc list-inside text-red-500 ml-2">
+                                <li v-for="error in errors" :key="error">{{ error }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <DialogFooter>
+                    <Button @click="showErrorDialog = false" class="w-full">
+                        Tutup
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
         <div class="w-full p-6">
             <div class="w-full max-w-6xl mx-auto">
                 <!-- Header -->
@@ -402,7 +586,7 @@ onUnmounted(() => {
                                             :alt="`${property.name} - Image ${image.id}`"
                                             class="w-full h-48 object-cover transition-transform group-hover:scale-105"
                                         />
-                                        <button v-if="isEditMode" @click="deleteImage(image.id)" class="absolute top-2 right-2 bg-white/80 hover:bg-red-500 hover:text-white text-red-500 rounded-full p-1 shadow transition-colors z-10" :disabled="deletingImageId === image.id">
+                                        <button v-if="isEditMode" @click="confirmDeleteImage(image.id)" class="absolute top-2 right-2 bg-white/80 hover:bg-red-500 hover:text-white text-red-500 rounded-full p-1 shadow transition-colors z-10" :disabled="deletingImageId === image.id">
                                             <Trash2 v-if="deletingImageId !== image.id" class="h-4 w-4" />
                                             <span v-else class="h-4 w-4 animate-spin">⏳</span>
                                         </button>

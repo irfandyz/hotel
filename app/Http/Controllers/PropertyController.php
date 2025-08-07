@@ -200,14 +200,26 @@ class PropertyController extends Controller
     {
         $image = \App\Models\PropertyImage::findOrFail($id);
         $property = $image->property;
+
+        // Ensure user can only delete images from their own properties
         if ($property->user_id !== auth()->id()) {
             abort(403);
         }
+
+        // Delete the image file from storage
         if ($image->image && \Storage::disk('public')->exists($image->image)) {
             \Storage::disk('public')->delete($image->image);
         }
+
+        // Delete the image record from database
         $image->delete();
-        return response()->json(['success' => true], 200);
+
+        // Return success response
+        return response()->json([
+            'success' => true,
+            'message' => 'Gambar berhasil dihapus',
+            'deleted_image_id' => $id
+        ], 200);
     }
 }
 
