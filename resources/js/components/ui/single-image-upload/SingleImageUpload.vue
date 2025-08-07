@@ -8,13 +8,15 @@ interface Props {
     accept?: string;
     maxSize?: number; // in MB
     placeholder?: string;
+    existingImage?: string | null; // URL gambar yang sudah ada
 }
 
 const props = withDefaults(defineProps<Props>(), {
     modelValue: null,
     accept: 'image/*',
     maxSize: 5,
-    placeholder: 'Upload Gambar'
+    placeholder: 'Upload Gambar',
+    existingImage: null
 });
 
 const emit = defineEmits<{
@@ -28,6 +30,8 @@ const selectedFile = computed({
     get: () => props.modelValue,
     set: (value) => emit('update:modelValue', value)
 });
+
+const hasImage = computed(() => selectedFile.value || props.existingImage);
 
 const handleFile = (file: File) => {
     // Check file type
@@ -50,6 +54,10 @@ const handleFile = (file: File) => {
             return;
         }
         selectedFile.value = file;
+        // Reset file input so the same file can be selected again
+        if (fileInput.value) {
+            fileInput.value.value = '';
+        }
     };
     img.onerror = () => {
         alert(`Gagal memuat gambar`);
@@ -97,12 +105,29 @@ const openFileDialog = () => {
 const getFilePreview = (file: File): string => {
     return URL.createObjectURL(file);
 };
+
+const getImageUrl = (): string => {
+    if (selectedFile.value) {
+        return getFilePreview(selectedFile.value);
+    }
+    return props.existingImage || '';
+};
 </script>
 
 <template>
     <div class="space-y-4">
+        <!-- Hidden File Input (Always Available) -->
+        <input
+            ref="fileInput"
+            type="file"
+            :accept="accept"
+            multiple="false"
+            class="hidden"
+            @change="handleFileInput"
+        />
+
         <!-- Upload Area -->
-        <div v-if="!selectedFile"
+        <div v-if="!hasImage"
             class="relative border-2 border-dashed rounded-lg p-6 transition-colors"
             :class="[
                 dragActive
@@ -113,14 +138,6 @@ const getFilePreview = (file: File): string => {
             @dragover="handleDragOver"
             @dragleave="handleDragLeave"
         >
-            <input
-                ref="fileInput"
-                type="file"
-                :accept="accept"
-                multiple="false"
-                class="hidden"
-                @change="handleFileInput"
-            />
 
             <div class="text-center">
                 <Upload class="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -149,16 +166,17 @@ const getFilePreview = (file: File): string => {
         </div>
 
         <!-- Preview Area -->
-        <div v-if="selectedFile" class="space-y-4">
+        <div v-if="hasImage" class="space-y-4">
             <div class="relative group">
                 <img
-                    :src="getFilePreview(selectedFile)"
-                    :alt="selectedFile.name"
+                    :src="getImageUrl()"
+                    :alt="selectedFile?.name || 'Menu Image'"
                     class="w-full max-w-md h-64 object-cover rounded-lg border border-gray-200"
                 />
 
                 <!-- Remove Button -->
                 <button
+                    v-if="selectedFile"
                     type="button"
                     class="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     @click="removeFile"
@@ -167,11 +185,16 @@ const getFilePreview = (file: File): string => {
                 </button>
 
                 <!-- File Info -->
-                <div class="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-3 rounded-b-lg">
+                <div v-if="selectedFile" class="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-3 rounded-b-lg">
                     <p class="text-sm truncate font-medium">{{ selectedFile.name }}</p>
                     <p class="text-xs opacity-75">
                         {{ (selectedFile.size / 1024 / 1024).toFixed(1) }}MB
                     </p>
+                </div>
+
+                <!-- Existing Image Badge -->
+                <div v-if="!selectedFile && props.existingImage" class="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-medium">
+                    Gambar Saat Ini
                 </div>
             </div>
 

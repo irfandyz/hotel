@@ -420,10 +420,6 @@ watch(() => props.filters.property_id, (newValue) => {
                             ? 'Tidak ada menu yang sesuai dengan filter yang dipilih.'
                             : 'Belum ada menu untuk properti ini.' }}
                     </p>
-                    <Button @click="router.get('/restaurants/create')">
-                        <Plus class="w-4 h-4 mr-2" />
-                        Tambah Menu Pertama
-                    </Button>
                 </div>
             </div>
 

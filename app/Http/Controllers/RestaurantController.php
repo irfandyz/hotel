@@ -79,13 +79,13 @@ class RestaurantController extends Controller
     {
 
         $request->validate([
-            'property_id' => 'required|exists:properties,id',
+            'property_id' => 'required|integer|exists:properties,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:enabled,disabled',
             'categories' => 'array',
-            'categories.*' => 'exists:restaurant_categories,id',
+            'categories.*' => 'integer|exists:restaurant_categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -133,21 +133,25 @@ class RestaurantController extends Controller
         ]);
     }
 
-    public function update(Request $request, RestaurantMenuItem $menuItem)
+                        public function update(Request $request, RestaurantMenuItem $menuItem)
     {
         $request->validate([
-            'property_id' => 'required|exists:properties,id',
+            'property_id' => 'required|integer|exists:properties,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:enabled,disabled',
-            'categories' => 'array',
-            'categories.*' => 'exists:restaurant_categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'categories' => 'nullable|array',
+            'categories.*' => 'integer|exists:restaurant_categories,id',
         ]);
 
         $user = Auth::user();
-        $property = $user->properties()->findOrFail($request->property_id);
+
+        // Check if user owns the property
+        $property = $user->properties()->find($request->property_id);
+        if (!$property) {
+            return back()->withErrors(['property_id' => 'Property tidak ditemukan atau tidak memiliki akses.']);
+        }
 
         $menuItem->update([
             'property_id' => $property->id,
@@ -155,6 +159,20 @@ class RestaurantController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'status' => $request->status,
+        ]);
+
+        // Sync categories
+        $menuItem->categories()->sync($request->categories ?? []);
+
+        return redirect()->route('restaurants.index', [
+            'property_id' => $property->id
+        ])->with('success', 'Menu item berhasil diperbarui');
+    }
+
+    public function updateImage(Request $request, RestaurantMenuItem $menuItem)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -167,12 +185,7 @@ class RestaurantController extends Controller
             $menuItem->update(['image' => $imagePath]);
         }
 
-        // Sync categories
-        $menuItem->categories()->sync($request->categories ?? []);
-
-        return redirect()->route('restaurants.index', [
-            'property_id' => $property->id
-        ])->with('success', 'Menu item berhasil diperbarui');
+        return back()->with('success', 'Gambar menu berhasil diperbarui');
     }
 
     public function destroy(RestaurantMenuItem $menuItem)
