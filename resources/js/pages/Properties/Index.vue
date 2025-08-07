@@ -111,18 +111,18 @@ const clearFilters = () => {
 <template>
     <AppLayout :breadcrumbs="[
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Hotel', href: '/properties' }
+        { title: 'Properties', href: '/properties' }
     ]">
         <div class="container mx-auto p-6">
             <!-- Header -->
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-3xl font-bold">Properti Saya</h1>
-                    <p class="text-muted-foreground">Kelola semua properti Anda</p>
+                    <h1 class="text-3xl font-bold">My Properties</h1>
+                    <p class="text-muted-foreground">Manage all your properties</p>
                 </div>
                 <Button @click="router.get('/properties/create')">
                     <Plus class="h-4 w-4 mr-2" />
-                    Tambah Properti
+                    Add Property
                 </Button>
             </div>
 
@@ -133,7 +133,7 @@ const clearFilters = () => {
                         <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <Input
                             v-model="searchQuery"
-                            placeholder="Cari properti..."
+                            placeholder="Search properties..."
                             class="pl-10"
                             @keyup.enter="applySearch"
                         />
@@ -146,7 +146,7 @@ const clearFilters = () => {
                         class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         @change="applySearch"
                     >
-                        <option value="">Semua Kategori</option>
+                        <option value="">All Categories</option>
                         <option v-for="category in uniqueCategories" :key="category" :value="category">
                             {{ category.charAt(0).toUpperCase() + category.slice(1) }}
                         </option>
@@ -157,34 +157,34 @@ const clearFilters = () => {
                         class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         @change="applySearch"
                     >
-                        <option value="">Semua Kota</option>
+                        <option value="">All Cities</option>
                         <option v-for="city in uniqueCities" :key="city" :value="city">
                             {{ city }}
                         </option>
                     </select>
 
                     <Button variant="outline" @click="clearFilters" class="text-sm">
-                        Bersihkan
+                        Clear
                     </Button>
                 </div>
             </div>
 
             <!-- Results Count -->
             <div class="mb-4 text-sm text-gray-600">
-                {{ filteredProperties.length }} properti ditemukan
+                {{ filteredProperties.length }} properties found
             </div>
 
             <!-- Empty State -->
             <div v-if="filteredProperties.length === 0" class="text-center py-12">
                 <div class="text-muted-foreground">
                     <p class="text-lg mb-2">
-                        {{ searchQuery || selectedCategory || selectedCity ? 'Tidak ada properti yang sesuai' : 'Belum ada properti' }}
+                        {{ searchQuery || selectedCategory || selectedCity ? 'No properties match your search' : 'No properties yet' }}
                     </p>
                     <p v-if="!searchQuery && !selectedCategory && !selectedCity">
-                        Mulai dengan menambahkan properti pertama Anda
+                        Start by adding your first property
                     </p>
                     <p v-else>
-                        Coba ubah filter pencarian Anda
+                        Try changing your search filters
                     </p>
                 </div>
             </div>
@@ -209,7 +209,7 @@ const clearFilters = () => {
                                         </div>
                                         <div v-if="property.total_rooms" class="flex items-center gap-1">
                                             <Bed class="w-3 h-3 text-gray-500" />
-                                            <span>{{ property.total_rooms }} kamar</span>
+                                            <span>{{ property.total_rooms }} rooms</span>
                                         </div>
                                     </div>
                                 </CardDescription>
@@ -246,7 +246,7 @@ const clearFilters = () => {
                                 class="group-hover:bg-blue-50 group-hover:border-blue-200 group-hover:text-blue-700 transition-colors"
                             >
                                 <Eye class="h-4 w-4 mr-2" />
-                                Detail
+                                Details
                             </Button>
                         </div>
                     </CardContent>

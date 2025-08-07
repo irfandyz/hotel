@@ -70,7 +70,7 @@ class PropertyController extends Controller
         }
 
         return redirect()->route('properties.index')
-            ->with('success', 'Hotel berhasil ditambahkan');
+            ->with('success', 'Property added successfully');
     }
 
     public function update(Request $request, Property $property)
@@ -98,7 +98,7 @@ class PropertyController extends Controller
 
         $property->update($validated);
 
-        return back()->with('success', 'Properti berhasil diperbarui');
+        return back()->with('success', 'Property updated successfully');
     }
 
     public function updateImages(Request $request, Property $property)
@@ -161,13 +161,13 @@ class PropertyController extends Controller
 
         $message = '';
         if ($uploadedCount > 0 && $deletedCount > 0) {
-            $message = "Berhasil mengupload {$uploadedCount} gambar dan menghapus {$deletedCount} gambar.";
+            $message = "Successfully uploaded {$uploadedCount} images and deleted {$deletedCount} images.";
         } elseif ($uploadedCount > 0) {
-            $message = "Berhasil mengupload {$uploadedCount} gambar.";
+            $message = "Successfully uploaded {$uploadedCount} images.";
         } elseif ($deletedCount > 0) {
-            $message = "Berhasil menghapus {$deletedCount} gambar.";
+            $message = "Successfully deleted {$deletedCount} images.";
         } else {
-            $message = 'Tidak ada perubahan gambar.';
+            $message = 'No image changes.';
         }
 
         \Log::info('updateImages completed', [

@@ -12,13 +12,10 @@ class TvManager extends Model
 
     protected $fillable = [
         'property_id',
+        'area_name',
         'guest_name',
         'image',
         'birth_date',
-        'room_number',
-        'check_in_date',
-        'check_out_date',
-        'status',
     ];
 
     protected $casts = [

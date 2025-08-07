@@ -68,58 +68,58 @@ const submitForm = () => {
 <template>
     <AppLayout :breadcrumbs="[
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Properti', href: '/properties' },
-        { title: 'Tambah Properti', href: '/properties/create' }
+        { title: 'Properties', href: '/properties' },
+        { title: 'Add Property', href: '/properties/create' }
     ]">
         <div class="w-full p-6">
             <div class="w-full max-w-4xl mx-auto">
                 <div class="flex items-center gap-4 mb-6 justify-between">
                     <Button variant="outline" size="sm" @click="router.get('/properties')">
                         <ArrowLeft class="h-4 w-4 mr-2" />
-                        Kembali
+                        Back
                     </Button>
                     <div>
-                        <h3 class="text-3xl font-bold">Tambah Properti</h3>
+                        <h3 class="text-3xl font-bold">Add Property</h3>
                     </div>
                 </div>
 
                 <Card class="w-full shadow-none border-none">
                     <CardHeader>
-                        <CardTitle>Informasi Properti</CardTitle>
+                        <CardTitle>Property Information</CardTitle>
                         <CardDescription>
-                            Masukkan detail properti yang akan Anda kelola
+                            Enter the details of the property you want to manage
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form @submit.prevent="submitForm" class="space-y-6">
                             <!-- Informasi Dasar -->
                             <div class="space-y-4">
-                                <h3 class="text-lg font-semibold">Informasi Dasar</h3>
+                                <h3 class="text-lg font-semibold">Basic Information</h3>
 
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     <div class="space-y-2">
-                                        <Label for="name">Nama Properti *</Label>
+                                        <Label for="name">Property Name *</Label>
                                         <Input
                                             id="name"
                                             v-model="form.name"
-                                            placeholder="Masukkan nama properti"
+                                            placeholder="Enter property name"
                                             required
                                         />
                                     </div>
 
                                     <div class="space-y-2">
-                                        <Label for="hotel_category">Kategori Properti</Label>
+                                        <Label for="hotel_category">Property Category</Label>
                                         <SimpleSelect
                                             v-model="form.hotel_category"
                                             :options="hotelCategories"
-                                            placeholder="Pilih kategori properti"
+                                            placeholder="Select property category"
                                             :disabled="isLoading"
                                         />
                                     </div>
                                 </div>
 
                                 <div class="space-y-2">
-                                    <Label for="description">Deskripsi</Label>
+                                    <Label for="description">Description</Label>
                                     <div class="relative">
                                         <textarea
                                             id="description"
@@ -127,7 +127,7 @@ const submitForm = () => {
                                             rows="3"
                                             maxlength="255"
                                             class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            placeholder="Deskripsi singkat tentang properti Anda"
+                                            placeholder="Brief description about your property"
                                         ></textarea>
                                         <div
                                             class="absolute bottom-2 right-2 text-xs transition-colors"
@@ -144,7 +144,7 @@ const submitForm = () => {
 
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     <div class="space-y-2">
-                                        <Label>Rating Bintang</Label>
+                                        <Label>Star Rating</Label>
                                         <div class="flex items-center gap-4">
                                             <StarRating
                                                 v-model="form.star_rating"
@@ -153,35 +153,35 @@ const submitForm = () => {
                                             />
                                             <div class="flex flex-col">
                                                 <span class="text-sm text-muted-foreground">
-                                                    {{ form.star_rating || 0 }} dari 5 bintang
+                                                    {{ form.star_rating || 0 }} out of 5 stars
                                                 </span>
                                                 <span class="text-xs text-muted-foreground">
-                                                    {{ form.star_rating === 1 ? 'Sangat Buruk' :
-                                                       form.star_rating === 2 ? 'Buruk' :
-                                                       form.star_rating === 3 ? 'Cukup' :
-                                                       form.star_rating === 4 ? 'Baik' :
-                                                       form.star_rating === 5 ? 'Sangat Baik' :
-                                                       'Pilih rating' }}
+                                                    {{ form.star_rating === 1 ? 'Very Poor' :
+                                                       form.star_rating === 2 ? 'Poor' :
+                                                       form.star_rating === 3 ? 'Fair' :
+                                                       form.star_rating === 4 ? 'Good' :
+                                                       form.star_rating === 5 ? 'Excellent' :
+                                                       'Select rating' }}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="space-y-2">
-                                        <Label for="total_rooms">Total Kamar</Label>
+                                        <Label for="total_rooms">Total Rooms</Label>
                                         <Input
                                             id="total_rooms"
                                             v-model="form.total_rooms"
                                             type="number"
                                             min="1"
-                                            placeholder="Jumlah kamar"
+                                            placeholder="Number of rooms"
                                         />
                                     </div>
                                 </div>
 
                                 <!-- Upload Gambar -->
                                 <div class="space-y-2">
-                                    <Label>Gambar Properti</Label>
+                                    <Label>Property Images</Label>
                                     <ImageUpload
                                         v-model="form.images"
                                         :max-files="5"
@@ -192,10 +192,10 @@ const submitForm = () => {
 
                             <!-- Informasi Kontak -->
                             <div class="space-y-4">
-                                <h3 class="text-lg font-semibold">Informasi Kontak</h3>
+                                <h3 class="text-lg font-semibold">Contact Information</h3>
 
                                 <div class="space-y-2">
-                                    <Label for="phone">Nomor Telepon</Label>
+                                    <Label for="phone">Phone Number</Label>
                                     <Input
                                         id="phone"
                                         v-model="form.phone"
@@ -206,22 +206,22 @@ const submitForm = () => {
 
                             <!-- Alamat -->
                             <div class="space-y-4">
-                                <h3 class="text-lg font-semibold">Alamat</h3>
+                                <h3 class="text-lg font-semibold">Address</h3>
 
                                 <div class="space-y-2">
-                                    <Label for="address">Alamat Lengkap</Label>
+                                    <Label for="address">Complete Address</Label>
                                     <textarea
                                         id="address"
                                         v-model="form.address"
                                         rows="2"
                                         class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        placeholder="Jl. Contoh No. 123"
+                                        placeholder="123 Example Street"
                                     ></textarea>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div class="space-y-2">
-                                        <Label for="city">Kota</Label>
+                                        <Label for="city">City</Label>
                                         <Input
                                             id="city"
                                             v-model="form.city"
@@ -230,7 +230,7 @@ const submitForm = () => {
                                     </div>
 
                                     <div class="space-y-2">
-                                        <Label for="state">Provinsi</Label>
+                                        <Label for="state">State/Province</Label>
                                         <Input
                                             id="state"
                                             v-model="form.state"
@@ -239,7 +239,7 @@ const submitForm = () => {
                                     </div>
 
                                     <div class="space-y-2">
-                                        <Label for="zip">Kode Pos</Label>
+                                        <Label for="zip">Postal Code</Label>
                                         <Input
                                             id="zip"
                                             v-model="form.zip"
@@ -249,7 +249,7 @@ const submitForm = () => {
                                 </div>
 
                                 <div class="space-y-2">
-                                    <Label for="country">Negara</Label>
+                                    <Label for="country">Country</Label>
                                     <Input
                                         id="country"
                                         v-model="form.country"
@@ -260,7 +260,7 @@ const submitForm = () => {
 
                             <!-- Koordinat (Opsional) -->
                             <div class="space-y-4">
-                                <h3 class="text-lg font-semibold">Koordinat (Opsional)</h3>
+                                <h3 class="text-lg font-semibold">Coordinates (Optional)</h3>
 
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     <div class="space-y-2">
@@ -294,14 +294,14 @@ const submitForm = () => {
                                     variant="outline"
                                     @click="router.get('/properties')"
                                 >
-                                    Batal
+                                    Cancel
                                 </Button>
                                 <Button
                                     type="submit"
                                     :disabled="isLoading"
                                 >
                                     <Save class="h-4 w-4 mr-2" />
-                                    {{ isLoading ? 'Menyimpan...' : 'Simpan Properti' }}
+                                    {{ isLoading ? 'Saving...' : 'Save Property' }}
                                 </Button>
                             </div>
                         </form>

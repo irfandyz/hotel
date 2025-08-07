@@ -114,7 +114,7 @@ class RestaurantController extends Controller
 
         return redirect()->route('restaurants.index', [
             'property_id' => $property->id
-        ])->with('success', 'Menu item berhasil ditambahkan');
+        ])->with('success', 'Menu item added successfully');
     }
 
     public function edit(RestaurantMenuItem $menuItem)
@@ -150,7 +150,7 @@ class RestaurantController extends Controller
         // Check if user owns the property
         $property = $user->properties()->find($request->property_id);
         if (!$property) {
-            return back()->withErrors(['property_id' => 'Property tidak ditemukan atau tidak memiliki akses.']);
+            return back()->withErrors(['property_id' => 'Property not found or you do not have access.']);
         }
 
         $menuItem->update([
@@ -166,7 +166,7 @@ class RestaurantController extends Controller
 
         return redirect()->route('restaurants.index', [
             'property_id' => $property->id
-        ])->with('success', 'Menu item berhasil diperbarui');
+        ])->with('success', 'Menu item updated successfully');
     }
 
     public function updateImage(Request $request, RestaurantMenuItem $menuItem)
@@ -185,7 +185,7 @@ class RestaurantController extends Controller
             $menuItem->update(['image' => $imagePath]);
         }
 
-        return back()->with('success', 'Gambar menu berhasil diperbarui');
+        return back()->with('success', 'Menu image updated successfully');
     }
 
     public function destroy(RestaurantMenuItem $menuItem)
@@ -201,6 +201,6 @@ class RestaurantController extends Controller
 
         return redirect()->route('restaurants.index', [
             'property_id' => $propertyId
-        ])->with('success', 'Menu item berhasil dihapus');
+        ])->with('success', 'Menu item deleted successfully');
     }
 }

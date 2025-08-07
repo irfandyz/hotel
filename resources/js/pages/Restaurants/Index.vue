@@ -182,20 +182,20 @@ watch(() => props.filters.property_id, (newValue) => {
 <template>
     <AppLayout :breadcrumbs="[
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Restoran', href: '/restaurants' }
+        { title: 'Restaurants', href: '/restaurants' }
     ]">
         <div class="container mx-auto p-6 relative">
         <!-- Header -->
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900">Restoran</h1>
-                <p class="text-gray-600 mt-1">Kelola menu restoran properti Anda</p>
+                <h1 class="text-3xl font-bold text-gray-900">Restaurants</h1>
+                <p class="text-gray-600 mt-1">Manage restaurant menus for your properties</p>
             </div>
 
             <!-- Property Selector -->
             <div class="flex items-center space-x-4 relative">
                 <select v-model="selectedPropertyId" class="w-64 h-10 px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="" disabled>Pilih properti...</option>
+                    <option value="" disabled>Select property...</option>
                     <option v-for="property in properties" :key="property.id" :value="property.id.toString()">
                         {{ property.name }}
                     </option>
@@ -203,7 +203,7 @@ watch(() => props.filters.property_id, (newValue) => {
 
                 <Button @click="router.get('/restaurants/create', { property_id: selectedPropertyId })" v-if="selectedPropertyId">
                     <Plus class="w-4 h-4 mr-2" />
-                    Tambah Menu
+                    Add Menu
                 </Button>
             </div>
         </div>
@@ -214,8 +214,8 @@ watch(() => props.filters.property_id, (newValue) => {
                 <div class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                     <Search class="w-12 h-12 text-gray-400" />
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Pilih Properti</h3>
-                <p class="text-gray-600 mb-6">Pilih properti dari dropdown di atas untuk melihat dan mengelola menu restorannya.</p>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Select Property</h3>
+                <p class="text-gray-600 mb-6">Select a property from the dropdown above to view and manage its restaurant menus.</p>
             </div>
         </div>
 
@@ -228,7 +228,7 @@ watch(() => props.filters.property_id, (newValue) => {
                         <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <Input
                             v-model="searchQuery"
-                            placeholder="Cari menu..."
+                            placeholder="Search menu..."
                             class="pl-10"
                             @keyup.enter="applySearch"
                         />
@@ -243,7 +243,7 @@ watch(() => props.filters.property_id, (newValue) => {
                         class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-start"
                     >
                         <Filter class="w-4 h-4" />
-                        <span>Kategori</span>
+                        <span>Categories</span>
                         <Badge v-if="selectedCategories.length > 0" variant="secondary" class="ml-1">
                             {{ selectedCategories.length }}
                         </Badge>
@@ -266,21 +266,21 @@ watch(() => props.filters.property_id, (newValue) => {
                     >
                         <div class="p-3 border-b border-gray-100">
                             <div class="flex items-center justify-between mb-2">
-                                <h3 class="text-sm font-medium text-gray-900">Pilih Kategori</h3>
+                                <h3 class="text-sm font-medium text-gray-900">Select Categories</h3>
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     @click="clearFilters"
                                     class="text-xs h-6 px-2"
                                 >
-                                    Bersihkan
+                                    Clear
                                 </Button>
                             </div>
                             <div class="relative">
                                 <Search class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3" />
                                 <Input
                                     v-model="categorySearchQuery"
-                                    placeholder="Cari kategori..."
+                                    placeholder="Search categories..."
                                     class="pl-7 h-8 text-xs"
                                 />
                             </div>
@@ -309,7 +309,7 @@ watch(() => props.filters.property_id, (newValue) => {
                                                 <div class="p-3 border-t border-gray-100 bg-gray-50">
                             <div class="flex justify-center items-center">
                                 <span class="text-xs text-gray-500">
-                                    {{ selectedCategories.length }} kategori dipilih
+                                    {{ selectedCategories.length }} categories selected
                                 </span>
                             </div>
                         </div>
@@ -346,12 +346,12 @@ watch(() => props.filters.property_id, (newValue) => {
 
                         <!-- Status Badge Overlay -->
                         <div class="absolute top-3 left-3">
-                            <Badge
-                                :variant="menuItem.status === 'enabled' ? 'default' : 'secondary'"
-                                class="text-xs font-medium shadow-sm"
-                            >
-                                {{ menuItem.status === 'enabled' ? 'Aktif' : 'Nonaktif' }}
-                            </Badge>
+                                                            <Badge
+                                    :variant="menuItem.status === 'enabled' ? 'default' : 'secondary'"
+                                    class="text-xs font-medium shadow-sm"
+                                >
+                                    {{ menuItem.status === 'enabled' ? 'Active' : 'Inactive' }}
+                                </Badge>
                         </div>
 
                         <!-- Action Buttons Overlay -->
@@ -414,11 +414,11 @@ watch(() => props.filters.property_id, (newValue) => {
                     <div class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                         <Search class="w-12 h-12 text-gray-400" />
                     </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada menu</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No menu items</h3>
                     <p class="text-gray-600 mb-6">
                         {{ searchQuery || selectedCategories.length > 0
-                            ? 'Tidak ada menu yang sesuai dengan filter yang dipilih.'
-                            : 'Belum ada menu untuk properti ini.' }}
+                            ? 'No menu items match the selected filters.'
+                            : 'No menu items for this property yet.' }}
                     </p>
                 </div>
             </div>
@@ -453,22 +453,22 @@ watch(() => props.filters.property_id, (newValue) => {
                         <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                             <Trash2 class="w-5 h-5 text-red-600" />
                         </div>
-                        <span>Hapus Menu</span>
+                        <span>Delete Menu</span>
                     </DialogTitle>
                     <DialogDescription class="text-left">
-                        Apakah Anda yakin ingin menghapus menu
+                        Are you sure you want to delete menu item
                         <span class="font-semibold text-gray-900">"{{ menuItemToDelete?.name }}"</span>?
                         <br><br>
-                        <span class="text-sm text-gray-500">Tindakan ini tidak dapat dibatalkan dan menu akan dihapus secara permanen.</span>
+                        <span class="text-sm text-gray-500">This action cannot be undone and the menu item will be permanently deleted.</span>
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter class="flex space-x-2">
                     <Button variant="outline" @click="cancelDelete">
-                        Batal
+                        Cancel
                     </Button>
                     <Button variant="destructive" @click="confirmDelete">
                         <Trash2 class="w-4 h-4 mr-2" />
-                        Hapus Menu
+                        Delete Menu
                     </Button>
                 </DialogFooter>
             </DialogContent>

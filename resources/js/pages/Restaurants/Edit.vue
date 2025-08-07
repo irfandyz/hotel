@@ -87,7 +87,7 @@ const submitImage = () => {
 <template>
     <AppLayout :breadcrumbs="[
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Restoran', href: '/restaurants' },
+        { title: 'Restaurants', href: '/restaurants' },
         { title: 'Edit Menu', href: `/restaurants/${menuItem.id}/edit` }
     ]">
         <div class="max-w-4xl container mx-auto mt-6">
@@ -98,7 +98,7 @@ const submitImage = () => {
                         property_id: selectedProperty?.id
                     })">
                         <ArrowLeft class="w-4 h-4 mr-2" />
-                        Kembali
+                        Back
                     </Button>
                     <div>
                         <h3 class="text-3xl font-bold text-gray-900">Edit Menu</h3>
@@ -110,7 +110,7 @@ const submitImage = () => {
             <div class="mt-6">
                 <Card class="border-none shadow-none">
                     <CardHeader>
-                        <CardTitle>Informasi Menu</CardTitle>
+                        <CardTitle>Menu Information</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form @submit.prevent="submit" class="space-y-6">
@@ -131,11 +131,11 @@ const submitImage = () => {
                         <!-- Menu Name -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Nama Menu *
+                                Menu Name *
                             </label>
                             <Input
                                 v-model="form.name"
-                                placeholder="Masukkan nama menu..."
+                                placeholder="Enter menu name..."
                                 :class="{ 'border-red-500': form.errors.name }"
                             />
                             <p v-if="form.errors.name" class="text-red-500 text-sm mt-1">
@@ -146,13 +146,13 @@ const submitImage = () => {
                         <!-- Description -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Deskripsi
+                                Description
                             </label>
                             <textarea
                                 v-model="form.description"
                                 rows="3"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Masukkan deskripsi menu..."
+                                placeholder="Enter menu description..."
                                 :class="{ 'border-red-500': form.errors.description }"
                             ></textarea>
                             <p v-if="form.errors.description" class="text-red-500 text-sm mt-1">
@@ -163,7 +163,7 @@ const submitImage = () => {
                         <!-- Price -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Harga *
+                                Price *
                             </label>
                             <div class="flex">
                                 <div class="flex items-center px-3 py-2 bg-gray-100 border border-r-0 border-gray-300 rounded-l-md text-sm font-medium text-gray-700 min-w-[3rem] justify-center">
@@ -189,8 +189,8 @@ const submitImage = () => {
                                 Status *
                             </label>
                             <select v-model="form.status" class="w-full h-10 px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                <option value="enabled">Aktif</option>
-                                <option value="disabled">Nonaktif</option>
+                                <option value="enabled">Active</option>
+                                <option value="disabled">Inactive</option>
                             </select>
                             <p v-if="form.errors.status" class="text-red-500 text-sm mt-1">
                                 {{ form.errors.status }}
@@ -202,7 +202,7 @@ const submitImage = () => {
                         <!-- Categories -->
                         <div>
                             <label class="text-sm font-medium text-gray-700 mb-1 block">
-                                Kategori
+                                Categories
                             </label>
                             <div class="grid grid-cols-4 gap-3">
                                 <div
@@ -237,14 +237,14 @@ const submitImage = () => {
                                 variant="outline"
                                 @click="router.get('/restaurants')"
                             >
-                                Batal
+                                Cancel
                             </Button>
                             <Button
                                 type="submit"
                                 :disabled="form.processing"
                             >
                                 <Save class="w-4 h-4 mr-2" />
-                                {{ form.processing ? 'Menyimpan...' : 'Update Menu' }}
+                                {{ form.processing ? 'Saving...' : 'Update Menu' }}
                             </Button>
                         </div>
                     </form>
@@ -258,7 +258,7 @@ const submitImage = () => {
 
                         <SingleImageUpload
                             v-model="imageForm.image"
-                            placeholder="Upload Gambar Menu"
+                            placeholder="Upload Menu Image"
                             accept="image/*"
                             :max-size="5"
                             :existing-image="menuItem.image ? `/storage/${menuItem.image}` : null"
@@ -274,7 +274,7 @@ const submitImage = () => {
                             class="bg-green-600 hover:bg-green-700 w-fit ms-auto mt-4"
                         >
                             <Save class="w-4 h-4 mr-2" />
-                            {{ imageForm.processing ? 'Menyimpan...' : 'Update Gambar' }}
+                            {{ imageForm.processing ? 'Saving...' : 'Update Image' }}
                         </Button>
                     </div>
                 </CardContent>

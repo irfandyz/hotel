@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { Building, LayoutGrid, Package, Utensils } from 'lucide-vue-next';
+import { Building, LayoutGrid, Utensils, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -15,19 +15,19 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Properti',
+        title: 'Properties',
         href: '/properties',
         icon: Building,
     },
     {
-        title: 'Restoran',
+        title: 'Restaurants',
         href: '/restaurants',
         icon: Utensils,
     },
     {
-        title: 'Manajemen TV',
-        href: '/tv-management',
-        icon: Package,
+        title: 'TV Managers',
+        href: '/tv-managers',
+        icon: Users,
     },
 ];
 

@@ -98,7 +98,7 @@ const refreshImages = async () => {
     window.location.reload();
   } catch (error) {
     console.error('Failed to refresh images:', error);
-    showNotification('Gagal memperbarui daftar gambar', 'error');
+            showNotification('Failed to update image list', 'error');
   }
 };
 
@@ -135,7 +135,7 @@ const handleNewImagesAdded = (files: File[]) => {
 
   const totalImages = propertyImages.value.length + newImages.value.length + newFiles.length;
   if (totalImages > 5) {
-    alert(`Maksimal 5 gambar. Saat ini ada ${propertyImages.value.length} gambar + ${newImages.value.length} yang akan diupload.`);
+            alert(`Maximum 5 images. Currently there are ${propertyImages.value.length} images + ${newImages.value.length} to be uploaded.`);
     return;
   }
 
@@ -171,7 +171,7 @@ const uploadNewImages = async () => {
     });
 
     // Tampilkan pesan sukses
-    showNotification('Gambar berhasil diupload', 'success');
+                showNotification('Images uploaded successfully', 'success');
 
     // Clear the newImages array after successful upload
     newImages.value = [];
@@ -182,8 +182,8 @@ const uploadNewImages = async () => {
     console.error('Upload error:', error);
 
     // Tampilkan error dialog dengan detail
-    let errorMessage = 'Upload gagal';
-    let errorTitle = 'Gagal Upload Gambar';
+            let errorMessage = 'Upload failed';
+        let errorTitle = 'Failed to Upload Images';
     let validationErrors: Record<string, string[]> = {};
 
     if (error.response) {
@@ -193,7 +193,7 @@ const uploadNewImages = async () => {
         errorMessage = error.response.data.message;
       } else if (error.response.data && error.response.data.errors) {
         validationErrors = error.response.data.errors;
-        errorMessage = 'Terdapat kesalahan validasi pada file yang diupload';
+                    errorMessage = 'There are validation errors in the uploaded files';
         errorTitle = 'Validasi Error';
       } else {
         errorMessage = error.response.statusText;
@@ -231,7 +231,7 @@ const toggleEditMode = () => {
         const hasChanges = false; // No unsaved changes for images
 
         if (hasChanges) {
-            const confirmExit = confirm('Ada perubahan gambar yang belum disimpan. Yakin ingin keluar dari mode edit?');
+            const confirmExit = confirm('There are unsaved image changes. Are you sure you want to exit edit mode?');
             if (!confirmExit) {
                 return;
             }
@@ -338,7 +338,7 @@ const deleteImage = async () => {
     console.error('Delete error:', error);
 
     // Tampilkan error dialog dengan detail
-    let errorMessage = 'Gagal menghapus gambar';
+            let errorMessage = 'Failed to delete image';
 
     if (error.response) {
       if (error.response.data && error.response.data.message) {
@@ -354,7 +354,7 @@ const deleteImage = async () => {
 
     showErrorDialog.value = true;
     errorDetails.value = {
-      title: 'Gagal Menghapus Gambar',
+              title: 'Failed to Delete Image',
       message: errorMessage
     };
   } finally {
@@ -407,7 +407,7 @@ onUnmounted(() => {
 <template>
     <AppLayout :breadcrumbs="[
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Properti', href: '/properties' },
+        { title: 'Properties', href: '/properties' },
         { title: property.name, href: `/properties/${property.id}` }
     ]">
         <!-- Notification Toast -->
@@ -434,15 +434,15 @@ onUnmounted(() => {
                 <DialogHeader>
                     <DialogTitle class="flex items-center gap-2">
                         <Trash2 class="h-5 w-5 text-red-500" />
-                        Konfirmasi Hapus Gambar
+                        Confirm Delete Image
                     </DialogTitle>
                     <DialogDescription>
-                        Apakah Anda yakin ingin menghapus gambar ini? Tindakan ini tidak dapat dibatalkan.
+                        Are you sure you want to delete this image? This action cannot be undone.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter class="flex gap-2">
                     <Button variant="outline" @click="cancelDelete" :disabled="deletingImageId !== null">
-                        Batal
+                        Cancel
                     </Button>
                     <Button
                         variant="destructive"
@@ -452,7 +452,7 @@ onUnmounted(() => {
                     >
                         <Trash2 v-if="deletingImageId === null" class="h-4 w-4" />
                         <span v-else class="h-4 w-4 animate-spin">⏳</span>
-                        {{ deletingImageId !== null ? 'Menghapus...' : 'Hapus Gambar' }}
+                        {{ deletingImageId !== null ? 'Deleting...' : 'Delete Image' }}
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -473,7 +473,7 @@ onUnmounted(() => {
 
                 <!-- Validation Errors -->
                 <div v-if="errorDetails.errors && Object.keys(errorDetails.errors).length > 0" class="mt-4">
-                    <h4 class="font-medium text-sm text-red-600 mb-2">Detail Error:</h4>
+                    <h4 class="font-medium text-sm text-red-600 mb-2">Error Details:</h4>
                     <div class="space-y-2 max-h-40 overflow-y-auto">
                         <div
                             v-for="(errors, field) in errorDetails.errors"
@@ -490,7 +490,7 @@ onUnmounted(() => {
 
                 <DialogFooter>
                     <Button @click="showErrorDialog = false" class="w-full">
-                        Tutup
+                        Close
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -502,7 +502,7 @@ onUnmounted(() => {
                 <div class="flex items-center gap-4 mb-6">
                     <Button variant="outline" size="sm" @click="router.get('/properties')">
                         <ArrowLeft class="h-4 w-4 mr-2" />
-                        Kembali
+                        Back
                     </Button>
                     <div class="flex-1">
                         <div class="flex items-center gap-4">
@@ -510,7 +510,7 @@ onUnmounted(() => {
                                 <Input
                                     v-model="form.name"
                                     class="text-3xl font-bold h-12 text-3xl"
-                                    placeholder="Nama properti"
+                                    placeholder="Property name"
                                 />
                                 <Button size="sm" @click="saveField('name')" :disabled="isLoading">
                                     <Save class="h-4 w-4" />
@@ -553,7 +553,7 @@ onUnmounted(() => {
                         <div v-else class="flex gap-2">
                             <Button @click="saveAllChanges" :disabled="isLoading">
                                 <Save class="h-4 w-4 mr-2" />
-                                {{ isLoading ? 'Menyimpan...' : 'Simpan Semua' }}
+                                {{ isLoading ? 'Saving...' : 'Save All' }}
                             </Button>
                             <Button variant="outline" @click="toggleEditMode">
                                 <X class="h-4 w-4 mr-2" />
@@ -592,12 +592,12 @@ onUnmounted(() => {
                                         </button>
                                     </div>
                                 </div>
-                                <div v-else class="text-muted-foreground text-sm">Belum ada gambar properti.</div>
+                                <div v-else class="text-muted-foreground text-sm">No property images yet.</div>
 
                                 <div v-if="isEditMode" class="mt-6 border-t pt-6">
-                                    <h4 class="font-medium mb-4">Upload Gambar Baru</h4>
+                                    <h4 class="font-medium mb-4">Upload New Images</h4>
                                     <div v-if="propertyImages.length + newImages.length >= 5" class="text-sm text-red-500 mb-4">
-                                        Maksimal 5 gambar. Hapus beberapa gambar terlebih dahulu.
+                                        Maximum 5 images. Delete some images first.
                                     </div>
                                     <ImageUpload
                                         v-model="newImages"
@@ -610,7 +610,7 @@ onUnmounted(() => {
                                     <!-- Preview gambar baru -->
                                     <div v-if="newImages.length > 0" class="mt-4 flex justify-end">
                                         <Button @click="uploadNewImages" :disabled="isUploading" size="sm">
-                                            {{ isUploading ? 'Uploading...' : 'Upload Semua' }}
+                                            {{ isUploading ? 'Uploading...' : 'Upload All' }}
                                         </Button>
                                     </div>
                                 </div>
@@ -623,7 +623,7 @@ onUnmounted(() => {
                         <Card v-if="property.description || isEditMode">
                             <CardHeader>
                                 <CardTitle class="flex items-center justify-between">
-                                    Deskripsi
+                                    Description
                                     <Button
                                         v-if="isEditMode && !property.description"
                                         size="sm"
@@ -631,7 +631,7 @@ onUnmounted(() => {
                                         @click="startEditing('description')"
                                     >
                                         <Edit class="h-4 w-4 mr-2" />
-                                        Tambah Deskripsi
+                                        Add Description
                                     </Button>
                                 </CardTitle>
                             </CardHeader>
@@ -643,7 +643,7 @@ onUnmounted(() => {
                                             rows="3"
                                             maxlength="255"
                                             class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            placeholder="Deskripsi singkat tentang properti Anda"
+                                            placeholder="Brief description about your property"
                                         ></textarea>
                                         <div class="absolute bottom-2 right-2 text-xs text-muted-foreground">
                                             {{ form.description.length }}/255
@@ -652,11 +652,11 @@ onUnmounted(() => {
                                     <div class="flex gap-2">
                                         <Button size="sm" @click="saveField('description')" :disabled="isLoading">
                                             <Save class="h-4 w-4 mr-2" />
-                                            Simpan
+                                            Save
                                         </Button>
                                         <Button size="sm" variant="outline" @click="cancelEditing">
                                             <X class="h-4 w-4 mr-2" />
-                                            Batal
+                                            Cancel
                                         </Button>
                                     </div>
                                 </div>
@@ -679,7 +679,7 @@ onUnmounted(() => {
                         <!-- Informasi Detail -->
                         <Card>
                             <CardHeader>
-                                <CardTitle>Informasi Detail</CardTitle>
+                                <CardTitle>Detailed Information</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -689,13 +689,13 @@ onUnmounted(() => {
                                                 <span class="text-sm font-semibold text-primary">{{ property.total_rooms || 0 }}</span>
                                             </div>
                                             <div class="flex-1">
-                                                <p class="font-medium">Total Kamar</p>
+                                                <p class="font-medium">Total Rooms</p>
                                                 <div v-if="editingField === 'total_rooms'" class="flex items-center gap-2 mt-1">
                                                     <Input
                                                         v-model="form.total_rooms"
                                                         type="number"
                                                         min="1"
-                                                        placeholder="Jumlah kamar"
+                                                        placeholder="Number of rooms"
                                                         class="flex-1"
                                                     />
                                                     <Button size="sm" @click="saveField('total_rooms')" :disabled="isLoading">
@@ -707,7 +707,7 @@ onUnmounted(() => {
                                                 </div>
                                                 <div v-else class="flex items-center justify-between">
                                                     <p class="text-sm text-muted-foreground">
-                                                        {{ property.total_rooms || 0 }} kamar
+                                                        {{ property.total_rooms || 0 }} rooms
                                                     </p>
                                                     <Button
                                                         v-if="isEditMode"
@@ -724,7 +724,7 @@ onUnmounted(() => {
                                         <div class="flex items-center gap-3">
                                             <Phone class="w-5 h-5 text-muted-foreground" />
                                             <div class="flex-1">
-                                                <p class="font-medium">Telepon</p>
+                                                <p class="font-medium">Phone</p>
                                                 <div v-if="editingField === 'phone'" class="flex items-center gap-2 mt-1">
                                                     <Input
                                                         v-model="form.phone"
@@ -740,7 +740,7 @@ onUnmounted(() => {
                                                 </div>
                                                 <div v-else class="flex items-center justify-between">
                                                     <p class="text-sm text-muted-foreground">
-                                                        {{ property.phone || 'Belum diisi' }}
+                                                        {{ property.phone || 'Not filled' }}
                                                     </p>
                                                     <Button
                                                         v-if="isEditMode"
@@ -815,12 +815,12 @@ onUnmounted(() => {
                                                 {{ (property.hotel_category || 'hotel').charAt(0).toUpperCase() + (property.hotel_category || 'hotel').slice(1) }}
                                             </Badge>
                                             <div class="flex-1">
-                                                <p class="font-medium">Kategori</p>
+                                                <p class="font-medium">Category</p>
                                                 <div v-if="editingField === 'hotel_category'" class="flex items-center gap-2 mt-1">
                                                     <SimpleSelect
                                                         v-model="form.hotel_category"
                                                         :options="hotelCategories"
-                                                        placeholder="Pilih kategori hotel"
+                                                        placeholder="Select hotel category"
                                                         :disabled="isLoading"
                                                         class="flex-1"
                                                     />
@@ -856,24 +856,24 @@ onUnmounted(() => {
 
                     <!-- Sidebar -->
                     <div class="space-y-6">
-                        <!-- Alamat -->
+                        <!-- Address -->
                         <Card>
                             <CardHeader>
                                 <CardTitle class="flex items-center gap-2">
                                     <MapPin class="w-5 h-5" />
-                                    Alamat
+                                    Address
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div class="space-y-4">
                                     <div class="text-sm">
-                                        <span class="font-medium">Alamat:</span>
+                                        <span class="font-medium">Address:</span>
                                         <div v-if="editingField === 'address'" class="mt-1">
                                             <textarea
                                                 v-model="form.address"
                                                 rows="2"
                                                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                                                placeholder="Jl. Contoh No. 123"
+                                                placeholder="123 Example Street"
                                             ></textarea>
                                             <div class="flex gap-2 mt-2">
                                                 <Button size="sm" @click="saveField('address')" :disabled="isLoading">
@@ -888,7 +888,7 @@ onUnmounted(() => {
                                         </div>
                                         <div v-else class="flex items-start justify-between">
                                             <p class="text-muted-foreground mt-1">
-                                                {{ property.address || 'Belum diisi' }}
+                                                {{ property.address || 'Not filled' }}
                                             </p>
                                             <Button
                                                 v-if="isEditMode"
@@ -902,7 +902,7 @@ onUnmounted(() => {
                                     </div>
 
                                     <div class="text-sm">
-                                        <span class="font-medium">Kota:</span>
+                                        <span class="font-medium">City:</span>
                                         <div v-if="editingField === 'city'" class="mt-1">
                                             <Input
                                                 v-model="form.city"
@@ -921,7 +921,7 @@ onUnmounted(() => {
                                         </div>
                                         <div v-else class="flex items-center justify-between">
                                             <p class="text-muted-foreground">
-                                                {{ property.city || 'Belum diisi' }}
+                                                {{ property.city || 'Not filled' }}
                                             </p>
                                             <Button
                                                 v-if="isEditMode"
@@ -935,7 +935,7 @@ onUnmounted(() => {
                                     </div>
 
                                     <div class="text-sm">
-                                        <span class="font-medium">Provinsi:</span>
+                                        <span class="font-medium">State/Province:</span>
                                         <div v-if="editingField === 'state'" class="mt-1">
                                             <Input
                                                 v-model="form.state"
@@ -954,7 +954,7 @@ onUnmounted(() => {
                                         </div>
                                         <div v-else class="flex items-center justify-between">
                                             <p class="text-muted-foreground">
-                                                {{ property.state || 'Belum diisi' }}
+                                                {{ property.state || 'Not filled' }}
                                             </p>
                                             <Button
                                                 v-if="isEditMode"
@@ -987,7 +987,7 @@ onUnmounted(() => {
                                         </div>
                                         <div v-else class="flex items-center justify-between">
                                             <p class="text-muted-foreground">
-                                                {{ property.zip || 'Belum diisi' }}
+                                                {{ property.zip || 'Not filled' }}
                                             </p>
                                             <Button
                                                 v-if="isEditMode"
@@ -1001,7 +1001,7 @@ onUnmounted(() => {
                                     </div>
 
                                     <div class="text-sm">
-                                        <span class="font-medium">Negara:</span>
+                                        <span class="font-medium">Country:</span>
                                         <div v-if="editingField === 'country'" class="mt-1">
                                             <Input
                                                 v-model="form.country"
@@ -1020,7 +1020,7 @@ onUnmounted(() => {
                                         </div>
                                         <div v-else class="flex items-center justify-between">
                                             <p class="text-muted-foreground">
-                                                {{ property.country || 'Belum diisi' }}
+                                                {{ property.country || 'Not filled' }}
                                             </p>
                                             <Button
                                                 v-if="isEditMode"
@@ -1076,7 +1076,7 @@ onUnmounted(() => {
                                         </div>
                                         <div v-else class="flex items-center justify-between">
                                             <p class="text-muted-foreground">
-                                                {{ property.latitude || 'Belum diisi' }}
+                                                {{ property.latitude || 'Not filled' }}
                                             </p>
                                             <Button
                                                 v-if="isEditMode"
@@ -1110,7 +1110,7 @@ onUnmounted(() => {
                                         </div>
                                         <div v-else class="flex items-center justify-between">
                                             <p class="text-muted-foreground">
-                                                {{ property.longitude || 'Belum diisi' }}
+                                                {{ property.longitude || 'Not filled' }}
                                             </p>
                                             <Button
                                                 v-if="isEditMode"
@@ -1129,12 +1129,12 @@ onUnmounted(() => {
                         <!-- Quick Actions -->
                         <Card>
                             <CardHeader>
-                                <CardTitle>Aksi Cepat</CardTitle>
+                                <CardTitle>Quick Actions</CardTitle>
                             </CardHeader>
                             <CardContent class="space-y-3">
                                 <Button variant="outline" @click="toggleEditMode" class="w-full justify-start">
                                     <Edit class="h-4 w-4 mr-2" />
-                                    Edit Properti
+                                    Edit Property
                                 </Button>
                             </CardContent>
                         </Card>
@@ -1147,9 +1147,9 @@ onUnmounted(() => {
         <div v-if="hasUnsavedChanges && isEditMode" class="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-2 rounded-lg shadow-lg z-50">
             <div class="flex items-center gap-2">
                 <div class="animate-pulse w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <p class="text-sm font-medium">Ada perubahan yang belum disimpan</p>
+                                        <p class="text-sm font-medium">There are unsaved changes</p>
                 <Button size="sm" variant="outline" @click="saveAllChanges" :disabled="false">
-                    Simpan
+                    Save
                 </Button>
             </div>
         </div>

@@ -71,8 +71,8 @@ const selectedProperty = computed(() =>
 <template>
     <AppLayout :breadcrumbs="[
         { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Restoran', href: '/restaurants' },
-        { title: 'Tambah Menu', href: '/restaurants/create' }
+        { title: 'Restaurants', href: '/restaurants' },
+        { title: 'Add Menu', href: '/restaurants/create' }
     ]">
         <div class="max-w-4xl container mx-auto mt-6">
             <!-- Header -->
@@ -80,10 +80,10 @@ const selectedProperty = computed(() =>
                 <div class="flex items-center justify-between space-x-4">
                     <Button variant="outline" @click="router.get('/restaurants')">
                         <ArrowLeft class="w-4 h-4 mr-2" />
-                        Kembali
+                        Back
                     </Button>
                     <div>
-                        <h3 class="text-3xl font-bold text-gray-900">Tambah Menu Baru</h3>
+                        <h3 class="text-3xl font-bold text-gray-900">Add New Menu</h3>
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@ const selectedProperty = computed(() =>
             <div class="mt-6">
                 <Card class="border-none shadow-none">
                     <CardHeader>
-                        <CardTitle>Informasi Menu</CardTitle>
+                        <CardTitle>Menu Information</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form @submit.prevent="submit" class="space-y-6">
@@ -113,11 +113,11 @@ const selectedProperty = computed(() =>
                             <!-- Menu Name -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Nama Menu *
+                                    Menu Name *
                                 </label>
                                 <Input
                                     v-model="form.name"
-                                    placeholder="Masukkan nama menu..."
+                                    placeholder="Enter menu name..."
                                     :class="{ 'border-red-500': form.errors.name }"
                                 />
                                 <p v-if="form.errors.name" class="text-red-500 text-sm mt-1">
@@ -128,13 +128,13 @@ const selectedProperty = computed(() =>
                             <!-- Description -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Deskripsi
+                                    Description
                                 </label>
                                 <textarea
                                     v-model="form.description"
                                     rows="3"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Masukkan deskripsi menu..."
+                                    placeholder="Enter menu description..."
                                     :class="{ 'border-red-500': form.errors.description }"
                                 ></textarea>
                                 <p v-if="form.errors.description" class="text-red-500 text-sm mt-1">
@@ -145,7 +145,7 @@ const selectedProperty = computed(() =>
                             <!-- Price -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Harga *
+                                    Price *
                                 </label>
                                 <InputGroup
                                     v-model="form.price"
@@ -163,8 +163,8 @@ const selectedProperty = computed(() =>
                                     Status *
                                 </label>
                                 <select v-model="form.status" class="w-full h-10 px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                    <option value="enabled">Aktif</option>
-                                    <option value="disabled">Nonaktif</option>
+                                    <option value="enabled">Active</option>
+                                    <option value="disabled">Inactive</option>
                                 </select>
                                 <p v-if="form.errors.status" class="text-red-500 text-sm mt-1">
                                     {{ form.errors.status }}
@@ -174,11 +174,11 @@ const selectedProperty = computed(() =>
                             <!-- Image Upload -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Gambar Menu
+                                    Menu Image
                                 </label>
                                                                 <SingleImageUpload
                                     v-model="form.image"
-                                    placeholder="Upload Gambar Menu"
+                                    placeholder="Upload Menu Image"
                                     accept="image/*"
                                     :max-size="5"
                                 />
@@ -191,7 +191,7 @@ const selectedProperty = computed(() =>
                             <!-- Categories -->
                             <div>
                                 <label class="text-sm font-medium text-gray-700 mb-1 block">
-                                    Kategori
+                                    Categories
                                 </label>
                                 <div class="grid grid-cols-4 gap-3">
                                     <div
@@ -228,14 +228,14 @@ const selectedProperty = computed(() =>
                                     variant="outline"
                                     @click="router.get('/restaurants')"
                                 >
-                                    Batal
+                                    Cancel
                                 </Button>
                                 <Button
                                     type="submit"
                                     :disabled="form.processing"
                                 >
                                     <Save class="w-4 h-4 mr-2" />
-                                    {{ form.processing ? 'Menyimpan...' : 'Simpan Menu' }}
+                                    {{ form.processing ? 'Saving...' : 'Save Menu' }}
                                 </Button>
                             </div>
                         </form>

@@ -71,6 +71,7 @@ return new class extends Migration
         Schema::create('tv_managers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('property_id')->constrained('properties');
+            $table->string('area_name');
             $table->string('guest_name');
             $table->string('image')->nullable();
             $table->string('birth_date')->nullable();
